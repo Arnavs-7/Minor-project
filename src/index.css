@@ -1,0 +1,112 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  :root {
+    --background: 28 50% 97%;
+    --foreground: 0 0% 15%;
+
+    --card: 30 40% 98%;
+    --card-foreground: 0 0% 15%;
+
+    --popover: 30 40% 98%;
+    --popover-foreground: 0 0% 15%;
+
+    --primary: 340 45% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 80 30% 65%;
+    --secondary-foreground: 0 0% 15%;
+
+    --muted: 30 20% 93%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 340 45% 65%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 340 45% 65%;
+
+    --radius: 0.75rem;
+
+    --rose: 340 45% 65%;
+    --sage: 80 30% 65%;
+    --craft-bg: 28 50% 97%;
+    --craft-warm: 28 60% 90%;
+    --champagne: 340 45% 65%;
+    --ivory: 28 50% 97%;
+    --noir: 0 0% 15%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .craft-divider {
+    @apply w-16 h-0.5 bg-gradient-to-r from-rose to-sage mx-auto rounded-full;
+  }
+
+  .craft-btn {
+    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.15em] uppercase font-body font-medium
+           bg-primary text-primary-foreground rounded-full transition-all duration-500
+           hover:shadow-lg hover:shadow-primary/25 hover:scale-105 active:scale-95;
+  }
+
+  .craft-btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.15em] uppercase font-body font-medium
+           border-2 border-primary text-primary bg-transparent rounded-full transition-all duration-500
+           hover:bg-primary hover:text-primary-foreground hover:shadow-lg hover:shadow-primary/25;
+  }
+
+  .product-card {
+    @apply cursor-pointer rounded-2xl overflow-hidden bg-white shadow-sm
+           hover:shadow-xl hover:shadow-primary/10 transition-all duration-500
+           hover:-translate-y-1;
+  }
+
+  .product-card-image {
+    @apply overflow-hidden bg-muted;
+  }
+
+  .product-card-image img {
+    @apply w-full h-full object-cover transition-transform duration-700 group-hover:scale-110;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
