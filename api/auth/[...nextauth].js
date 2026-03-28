@@ -3,6 +3,7 @@
 // Auth.js / NextAuth can be served out of API endpoints as a placeholder implementation.
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 // Add credentials provider or others as needed
 
 export default function authHandler(req, res) {
@@ -15,6 +16,21 @@ export default function authHandler(req, res) {
       GoogleProvider({
         clientId: process.env.GOOGLE_CLIENT_ID || "PLACEHOLDER_CLIENT_ID",
         clientSecret: process.env.GOOGLE_CLIENT_SECRET || "PLACEHOLDER_CLIENT_SECRET"
+      }),
+      CredentialsProvider({
+        name: "Email and Password",
+        credentials: {
+          email: { label: "Email", type: "email", placeholder: "your@email.com" },
+          password: { label: "Password", type: "password" }
+        },
+        async authorize(credentials) {
+          // TODO: Verify against the Neon 'users' table and hash comparators using SQL!
+          // Dummy verification testing placeholder to unlock frontend auth logic.
+          if (credentials && credentials.email && credentials.password) {
+            return { id: "1", name: "Guest User", email: credentials.email };
+          }
+          return null;
+        }
       })
     ],
     // Read directly from Vercel env settings (no fallback)
