@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Heart, ShoppingBag, Menu, X } from "lucide-react";
+import { Heart, ShoppingBag, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/hooks/useStore";
 import { categoryDefs } from "@/data/products";
@@ -72,6 +72,9 @@ const Navbar = () => {
                   {wishlistItems.length}
                 </span>
               )}
+            </Link>
+            <Link to="/auth" className="text-foreground hover:text-primary transition-colors cursor-pointer" aria-label="Account">
+              <User size={20} strokeWidth={1.5} />
             </Link>
             <Link to="/cart" className="text-foreground hover:text-primary transition-colors relative" aria-label="Cart">
               <ShoppingBag size={20} strokeWidth={1.5} />

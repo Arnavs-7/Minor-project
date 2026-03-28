@@ -55,9 +55,15 @@ const Footer = () => {
           <div>
             <h4 className="text-xs tracking-[0.2em] uppercase mb-4 font-semibold">Help</h4>
             <div className="space-y-3">
-              {["Shipping & Returns", "Care Instructions", "Custom Orders", "FAQ", "Contact Us"].map((item) => (
-                <Link key={item} to="#" className="block text-sm text-white/60 hover:text-primary transition-colors font-light">
-                  {item}
+              {[
+                { name: "Shipping Policy", path: "/shipping-policy" }, 
+                { name: "Refund Policy", path: "/refund-policy" }, 
+                { name: "Care Instructions", path: "#" }, 
+                { name: "FAQ", path: "#" }, 
+                { name: "Contact Us", path: "/contact" }
+              ].map((item) => (
+                <Link key={item.name} to={item.path} className="block text-sm text-white/60 hover:text-primary transition-colors font-light">
+                  {item.name}
                 </Link>
               ))}
             </div>
@@ -81,9 +87,12 @@ const Footer = () => {
             © 2026 MS DIY. All rights reserved.
           </p>
           <div className="flex gap-6">
-            {["Privacy Policy", "Terms of Service"].map((item) => (
-              <Link key={item} to="#" className="text-xs text-white/40 hover:text-primary transition-colors font-light">
-                {item}
+            {[
+              { name: "Privacy Policy", path: "#" }, 
+              { name: "Terms of Service", path: "/terms" }
+            ].map((item) => (
+              <Link key={item.name} to={item.path} className="text-xs text-white/40 hover:text-primary transition-colors font-light">
+                {item.name}
               </Link>
             ))}
           </div>

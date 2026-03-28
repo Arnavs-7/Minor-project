@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Minus, Plus, X, ShoppingBag, ArrowLeft } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PaytmCheckout from "@/components/PaytmCheckout";
 import { useStore } from "@/hooks/useStore";
 import { getProductImage } from "@/components/ProductCard";
 
@@ -95,19 +96,19 @@ const CartPage = () => {
                       <span className="text-lg font-bold">₹{total.toLocaleString()}</span>
                     </div>
                   </div>
-                  <button className="craft-btn w-full justify-center mb-3">
-                    Proceed to Checkout
-                  </button>
-                  <Link to="/" className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors tracking-[0.1em] uppercase font-medium">
+                  <PaytmCheckout amount={total} disabled={cartItems.length === 0} />
+
+                  <Link to="/" className="block text-center text-xs text-muted-foreground hover:text-primary transition-colors tracking-[0.1em] uppercase font-medium mt-3">
                     Continue Shopping
                   </Link>
 
                   <div className="mt-8 pt-6 border-t border-border">
-                    <p className="text-[10px] text-muted-foreground text-center mb-3">Secure Payment Options</p>
+                    <p className="text-[10px] text-muted-foreground text-center mb-3">Secure Payment via Paytm</p>
                     <div className="flex justify-center gap-4 text-[10px] text-muted-foreground tracking-[0.1em] uppercase font-medium">
                       <span>UPI</span>
                       <span>Cards</span>
                       <span>Wallets</span>
+                      <span>Net Banking</span>
                     </div>
                   </div>
                 </div>
