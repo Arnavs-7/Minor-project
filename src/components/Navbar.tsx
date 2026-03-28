@@ -3,11 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import { Heart, ShoppingBag, Menu, X, User } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/hooks/useStore";
+import { useSession, signOut } from "@/hooks/useAuth";
 import { categoryDefs } from "@/data/products";
 
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { cartCount, wishlistItems } = useStore();
+  const { status, data } = useSession();
   const navigate = useNavigate();
 
   const handleCategoryClick = (categoryId: string) => {
@@ -73,9 +75,22 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
-            <Link to="/auth" className="text-foreground hover:text-primary transition-colors cursor-pointer" aria-label="Account">
-              <User size={20} strokeWidth={1.5} />
-            </Link>
+            {status === "authenticated" ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 hidden md:inline">
+                  {data?.user?.name || "User"}
+                </span>
+                <button onClick={() => signOut()} className="text-foreground hover:text-red-500 transition-colors cursor-pointer flex items-center gap-1 group" aria-label="Sign Out">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+                  <span className="text-[10px] font-bold uppercase tracking-widest hidden md:inline group-hover:text-red-500">Logout</span>
+                </button>
+              </div>
+            ) : (
+              <Link to="/login" className="text-foreground hover:text-[#D4AF37] transition-colors cursor-pointer flex items-center gap-1.5" aria-label="Login">
+                <User size={18} strokeWidth={1.5} />
+                <span className="text-xs font-bold uppercase tracking-wider hidden md:inline">Login</span>
+              </Link>
+            )}
             <Link to="/cart" className="text-foreground hover:text-primary transition-colors relative" aria-label="Cart">
               <ShoppingBag size={20} strokeWidth={1.5} />
               {cartCount > 0 && (
