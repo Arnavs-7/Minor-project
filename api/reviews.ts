@@ -1,48 +1,70 @@
-import { neon } from '@neondatabase/serverless';
+import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { neon } from "@neondatabase/serverless";
 
-export default async function handler(req: any, res: any) {
-  const sql = neon(process.env.DATABASE_URL!);
+const sql = neon(process.env.DATABASE_URL!);
 
-  // Handle GET requests (Fetching reviews for a product)
-  if (req.method === 'GET') {
-    const { productId } = req.query;
-    if (!productId) {
-      return res.status(400).json({ error: 'Product ID is required' });
-    }
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-    try {
-      const result = await sql`
-        SELECT * FROM reviews 
-        WHERE product_id = ${productId} 
-        ORDER BY created_at DESC
-      `;
-      return res.status(200).json(result);
-    } catch (error) {
-      console.error('Error fetching reviews:', error);
-      return res.status(500).json({ error: 'Failed to fetch reviews' });
-    }
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
   }
 
-  // Handle POST requests (Submitting a new review)
-  if (req.method === 'POST') {
-    const { productId, userName, rating, comment } = req.body;
+  try {
+    // ── GET /api/reviews?product_id=<id> ──
+    if (req.method === "GET") {
+      const { product_id } = req.query;
+      if (!product_id || typeof product_id !== "string") {
+        return res.status(400).json({ error: "product_id query parameter is required" });
+      }
 
-    if (!productId || !userName || !rating) {
-      return res.status(400).json({ error: 'Missing required fields' });
+      const reviews = await sql`
+        SELECT id, product_id, user_name, rating, comment, created_at
+        FROM reviews
+        WHERE product_id = ${product_id}
+        ORDER BY created_at DESC
+        LIMIT 50
+      `;
+
+      return res.status(200).json(reviews);
     }
 
-    try {
+    // ── POST /api/reviews ──
+    if (req.method === "POST") {
+      const { product_id, user_name, rating, comment } = req.body || {};
+
+      // Validation
+      if (!product_id || typeof product_id !== "string") {
+        return res.status(400).json({ error: "product_id is required" });
+      }
+      if (!user_name || typeof user_name !== "string" || user_name.trim().length === 0) {
+        return res.status(400).json({ error: "user_name is required" });
+      }
+      if (!rating || typeof rating !== "number" || rating < 1 || rating > 5) {
+        return res.status(400).json({ error: "rating must be a number between 1 and 5" });
+      }
+      if (!comment || typeof comment !== "string" || comment.trim().length === 0) {
+        return res.status(400).json({ error: "comment is required" });
+      }
+
+      const sanitizedName = user_name.trim().slice(0, 100);
+      const sanitizedComment = comment.trim().slice(0, 1000);
+
       const result = await sql`
         INSERT INTO reviews (product_id, user_name, rating, comment)
-        VALUES (${productId}, ${userName}, ${rating}, ${comment})
-        RETURNING *
+        VALUES (${product_id}, ${sanitizedName}, ${rating}, ${sanitizedComment})
+        RETURNING id, product_id, user_name, rating, comment, created_at
       `;
-      return res.status(201).json(result[0]);
-    } catch (error) {
-      console.error('Error creating review:', error);
-      return res.status(500).json({ error: 'Failed to submit review' });
-    }
-  }
 
-  return res.status(405).json({ error: 'Method not allowed' });
+      return res.status(201).json(result[0]);
+    }
+
+    return res.status(405).json({ error: "Method not allowed" });
+  } catch (error) {
+    console.error("Reviews API error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
