@@ -16,15 +16,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // ── GET /api/reviews?product_id=<id> ──
     if (req.method === "GET") {
-      const { product_id } = req.query;
-      if (!product_id || typeof product_id !== "string") {
-        return res.status(400).json({ error: "product_id query parameter is required" });
+      const productId = req.query.productId || req.query.product_id;
+      
+      if (!productId || typeof productId !== "string") {
+        return res.status(400).json({ error: "productId/product_id query parameter is required" });
       }
 
       const reviews = await sql`
         SELECT id, product_id, user_name, rating, comment, created_at
         FROM reviews
-        WHERE product_id = ${product_id}
+        WHERE product_id = ${productId}
         ORDER BY created_at DESC
         LIMIT 50
       `;
@@ -34,11 +35,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     // ── POST /api/reviews ──
     if (req.method === "POST") {
-      const { product_id, user_name, rating, comment } = req.body || {};
+      const body = req.body || {};
+      const productId = body.productId || body.product_id;
+      const { user_name, rating, comment } = body;
 
       // Validation
-      if (!product_id || typeof product_id !== "string") {
-        return res.status(400).json({ error: "product_id is required" });
+      if (!productId || typeof productId !== "string") {
+        return res.status(400).json({ error: "productId/product_id is required" });
       }
       if (!user_name || typeof user_name !== "string" || user_name.trim().length === 0) {
         return res.status(400).json({ error: "user_name is required" });
@@ -55,7 +58,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       const result = await sql`
         INSERT INTO reviews (product_id, user_name, rating, comment)
-        VALUES (${product_id}, ${sanitizedName}, ${rating}, ${sanitizedComment})
+        VALUES (${productId}, ${sanitizedName}, ${rating}, ${sanitizedComment})
         RETURNING id, product_id, user_name, rating, comment, created_at
       `;
 
