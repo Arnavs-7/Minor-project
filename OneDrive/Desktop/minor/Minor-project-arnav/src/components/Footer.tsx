@@ -44,7 +44,7 @@ const Footer = () => {
             <h4 className="text-xs tracking-[0.2em] uppercase mb-4">Help</h4>
             <div className="space-y-3">
               {[
-                { label: "Shipping & Returns", path: "/shipping-returns" },
+                { label: "Delivery & Returns", path: "/shipping-returns" },
                 { label: "Care Instructions", path: "/care-instructions" },
                 { label: "Custom Orders", path: "/custom-orders" },
                 { label: "Track Order", path: "/track-order" },

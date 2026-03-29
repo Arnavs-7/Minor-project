@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Star, Minus, Plus, ChevronRight, Zap } from "lucide-react";
@@ -18,6 +18,54 @@ const ProductPage = () => {
   const [selectedSize, setSelectedSize] = useState(product.sizes?.[0] || "");
   const { addToCart, toggleWishlist, isWishlisted } = useCart();
   const navigate = useNavigate();
+  
+  const [liveReviews, setLiveReviews] = useState<any[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewForm, setReviewForm] = useState({ userName: "", rating: 5, comment: "" });
+
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch(`/api/reviews?productId=${product.id}`);
+      if (res.ok) {
+        const data = await res.json();
+        setLiveReviews(data);
+      }
+    } catch (err) {
+      console.error("Error fetching reviews:", err);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  useEffect(() => {
+    if (product.id) {
+      fetchReviews();
+    }
+  }, [product.id]);
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmittingReview(true);
+    try {
+      const res = await fetch("/api/reviews", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId: product.id,
+          ...reviewForm
+        })
+      });
+      if (res.ok) {
+        setReviewForm({ userName: "", rating: 5, comment: "" });
+        fetchReviews();
+      }
+    } catch (err) {
+      console.error("Error submitting review:", err);
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
   
   const wishlisted = isWishlisted(product.id);
 
@@ -44,15 +92,15 @@ const ProductPage = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
-              className="w-full max-w-lg mx-auto lg:max-w-none overflow-hidden bg-muted group cursor-zoom-in"
+              className="relative aspect-[4/5] md:aspect-square lg:aspect-[3/4] overflow-hidden bg-muted group cursor-zoom-in rounded-2xl shadow-sm"
             >
-              <div className="relative w-full aspect-[3/4]">
-                <img
-                  src={img}
-                  alt={product.name}
-                  className="absolute inset-0 w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-                />
-              </div>
+              <img
+                src={img}
+                alt={product.name}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                width={800}
+                height={1000}
+              />
             </motion.div>
 
             <motion.div
@@ -168,8 +216,89 @@ const ProductPage = () => {
           </div>
         </div>
 
-        {/* Customer Reviews Section — Live from Neon DB */}
-        <CustomerReviews productId={product.id} />
+        <div className="container mx-auto px-6 lg:px-12 py-12 border-t border-border mt-12">
+          <div className="flex flex-col lg:flex-row justify-between items-start gap-12">
+            <div className="flex-1 w-full">
+              <h3 className="font-heading text-2xl mb-8">Customer Reviews</h3>
+              {loadingReviews ? (
+                <div className="animate-pulse space-y-4">
+                  {[1, 2].map(i => <div key={i} className="h-24 bg-muted rounded-lg" />)}
+                </div>
+              ) : liveReviews.length === 0 ? (
+                <div className="text-center py-12 border border-dashed border-border rounded-lg">
+                  <p className="text-muted-foreground font-light text-sm italic">No reviews yet. Be the first to share your thoughts!</p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {liveReviews.map((review: any) => (
+                    <div key={review.id} className="border-b border-border pb-6 last:border-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        {Array.from({ length: 5 }).map((_, i) => (
+                          <Star key={i} size={12} className={i < review.rating ? "text-champagne fill-champagne" : "text-border"} />
+                        ))}
+                        <span className="text-[10px] text-muted-foreground ml-2 capitalize">
+                          {new Date(review.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-muted-foreground font-light text-sm italic mb-2">"{review.comment}"</p>
+                      <p className="text-xs font-medium uppercase tracking-wider">— {review.user_name}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="w-full lg:w-96 bg-muted/30 p-8 rounded-2xl">
+              <h4 className="font-heading text-xl mb-2">Share Your Thoughts</h4>
+              <p className="text-muted-foreground font-light text-sm mb-6">Have you purchased this product? We'd love to hear your feedback.</p>
+              
+              <form onSubmit={handleReviewSubmit} className="space-y-4">
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider mb-2 block">Name</label>
+                  <input
+                    type="text"
+                    required
+                    value={reviewForm.userName}
+                    onChange={e => setReviewForm({ ...reviewForm, userName: e.target.value })}
+                    className="w-full bg-background border border-border px-3 py-2 text-sm outline-none focus:border-champagne transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider mb-2 block">Rating</label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3, 4, 5].map(star => (
+                      <button
+                        key={star}
+                        type="button"
+                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                        className="hover:scale-110 transition-transform"
+                      >
+                        <Star size={20} className={star <= reviewForm.rating ? "text-champagne fill-champagne" : "text-border"} />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] uppercase tracking-wider mb-2 block">Comment</label>
+                  <textarea
+                    required
+                    rows={3}
+                    value={reviewForm.comment}
+                    onChange={e => setReviewForm({ ...reviewForm, comment: e.target.value })}
+                    className="w-full bg-background border border-border px-3 py-2 text-sm outline-none focus:border-champagne transition-colors resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  disabled={submittingReview}
+                  className="w-full luxury-btn justify-center disabled:opacity-50"
+                >
+                  {submittingReview ? "Submitting..." : "Submit Review"}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
 
         {related.length > 0 && (
           <section className="py-16 lg:py-20">

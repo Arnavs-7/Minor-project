@@ -15,7 +15,7 @@ const policies = [
     icon: Clock,
     title: "Processing Time",
     description:
-      "Since all our products are handmade with love, please allow 3–5 business days for processing. You'll receive a tracking link once your order ships.",
+      "Since all our products are handmade with love, please allow 7-10 days for delivery. You'll receive a tracking link once your order ships.",
   },
   {
     icon: RotateCcw,
@@ -34,7 +34,7 @@ const policies = [
 const faqs = [
   {
     q: "How long does delivery take?",
-    a: "Standard delivery takes 5–7 business days. Express delivery (available at checkout) takes 2–3 business days.",
+    a: "Standard delivery takes 7-10 days. Express delivery (available at checkout) takes 3-5 business days.",
   },
   {
     q: "Can I track my order?",

@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import { bestSellers, products } from "@/data/products";
 
 const BestSellersSection = () => {
-  const items = bestSellers.length >= 8 ? bestSellers.slice(0, 8) : products.slice(0, 8);
+  const items = bestSellers.length >= 8 ? bestSellers.slice(0, 8) : [...bestSellers, ...products.filter(p => !bestSellers.includes(p))].slice(0, 8);
 
   return (
     <section className="py-20 lg:py-28 bg-muted/30">

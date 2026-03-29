@@ -89,9 +89,9 @@ const TrackOrderPage = () => {
           
           <div className="text-center mb-12">
             <h1 className="font-heading text-3xl lg:text-4xl text-foreground mb-4">Track Your Order</h1>
-            <p className="text-muted-foreground font-light max-w-lg mx-auto">
-              Enter your Order ID below to receive real-time updates on your beautiful handmade creations.
-            </p>
+            <p className="text-sm text-muted-foreground font-light max-w-md mx-auto">
+            Enter your order number to see your delivery status. Expected delivery: 7-10 days for all orders.
+          </p>
           </div>
 
           <div className="bg-background border border-border p-8 lg:p-12 shadow-sm relative overflow-hidden">
