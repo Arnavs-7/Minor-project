@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lato:wght@300;400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 14% 96%;
+    --foreground: 0 0% 6%;
+
+    --card: 30 14% 96%;
+    --card-foreground: 0 0% 6%;
+
+    --popover: 30 14% 96%;
+    --popover-foreground: 0 0% 6%;
+
+    --primary: 0 0% 6%;
+    --primary-foreground: 30 14% 96%;
+
+    --secondary: 28 30% 68%;
+    --secondary-foreground: 0 0% 6%;
+
+    --muted: 30 10% 90%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 28 30% 68%;
+    --accent-foreground: 0 0% 6%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 10% 85%;
+    --input: 30 10% 85%;
+    --ring: 28 30% 68%;
+
+    --radius: 0.25rem;
+
+    --silver: 0 0% 75%;
+    --champagne: 28 30% 68%;
+    --ivory: 30 14% 96%;
+    --noir: 0 0% 6%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer components {
+  .luxury-divider {
+    @apply w-16 h-px bg-champagne mx-auto;
+  }
+
+  .luxury-btn {
+    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.2em] uppercase font-body font-light 
+           bg-primary text-primary-foreground transition-all duration-500 
+           hover:bg-champagne hover:text-noir;
+  }
+
+  .luxury-btn-outline {
+    @apply inline-flex items-center justify-center px-8 py-3 text-sm tracking-[0.2em] uppercase font-body font-light 
+           border border-primary text-primary bg-transparent transition-all duration-500 
+           hover:bg-primary hover:text-primary-foreground;
+  }
+
+  .product-card {
+    @apply cursor-pointer;
+  }
+
+  .product-card-image {
+    @apply overflow-hidden bg-muted;
+  }
+
+  .product-card-image img {
+    @apply w-full h-full object-cover transition-transform duration-700 group-hover:scale-110;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
